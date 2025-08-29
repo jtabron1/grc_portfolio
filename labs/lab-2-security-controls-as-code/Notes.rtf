@@ -1,0 +1,309 @@
+This was my first ste of issues when trying to run cfn-lint:
+PROMPT: I'm trying to install cfn-lint and got this error when I typed in pip install cfn-lint: "zsh: command not found: pip"
+
+The error means pip isn't installed or isn't in your PATH. Here are a few ways to fix this:
+
+Check if Python is installed:
+
+bash
+python3 --version
+Try using pip3 instead:
+
+bash
+pip3 install cfn-lint
+If that doesn't work, install pip:
+
+On macOS:
+
+bash
+# If you have Homebrew
+brew install python
+
+# Or download and install pip directly
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
+On Linux (Ubuntu/Debian):
+
+bash
+sudo apt update
+sudo apt install python3-pip
+On Linux (CentOS/RHEL):
+
+bash
+sudo yum install python3-pip
+# or on newer versions
+sudo dnf install python3-pip
+Alternative: Use pipx (recommended for CLI tools):
+
+bash
+# Install pipx first
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath
+
+# Then install cfn-lint
+pipx install cfn-lint
+Check your PATH: If pip is installed but not found, add it to your PATH in your ~/.zshrc:
+
+bash
+export PATH="$PATH:/usr/local/bin"
+Try pip3 install cfn-lint first - that's the most common solution.
+
+PROMPT: getting a "command not found: cfn-lint" error when I type in this command: cfn-lint security-controls-baseline.yaml
+I've installed cfn-lint
+
+The issue is that cfn-lint isn't in your PATH after installation. Here are several ways to fix this:
+
+1. Try with full path (if installed with pip3):
+
+bash
+~/.local/bin/cfn-lint security-controls-baseline.yaml
+2. Add to your PATH permanently: Add this line to your ~/.zshrc file:
+
+bash
+export PATH="$PATH:~/.local/bin"
+Then reload your shell:
+
+bash
+source ~/.zshrc
+3. Find where cfn-lint was installed:
+
+bash
+find / -name "cfn-lint" 2>/dev/null
+# or
+which cfn-lint
+4. If you used pipx:
+
+bash
+pipx install cfn-lint
+# Then it should work directly
+cfn-lint security-controls-baseline.yaml
+5. Try running with python module syntax:
+
+bash
+python3 -m cfnlint security-controls-baseline.yaml
+6. Check if it's installed correctly:
+
+bash
+pip3 show cfn-lint
+Quick fix: The most common solution is adding ~/.local/bin to your PATH. After installing with pip3, executables typically go there but aren't automatically added to PATH on some systems.
+
+Try option 1 first to see if cfn-lint works with the full path, then add it to PATH permanently with option 2.
+
+when I typed in "~/.local/bin/cfn-lint security-controls-baseline.yaml" I got "zsh: no such file or directory: /Users/jamestabron/.local/bin/cfn-lint"
+
+The cfn-lint wasn't installed in the expected location. Let's find where it actually went:
+
+1. First, verify cfn-lint is actually installed:
+
+bash
+pip3 show cfn-lint
+2. Find where cfn-lint was installed:
+
+bash
+find /usr -name "cfn-lint" 2>/dev/null
+find /opt -name "cfn-lint" 2>/dev/null
+find ~ -name "cfn-lint" 2>/dev/null
+3. Check your Python installation paths:
+
+bash
+python3 -m site --user-base
+python3 -c "import site; print(site.USER_BASE)"
+4. Try running it as a Python module (this often works):
+
+bash
+python3 -m cfnlint security-controls-baseline.yaml
+5. If you're on macOS with Homebrew, try:
+
+bash
+brew install cfn-lint
+6. Or reinstall with explicit user flag:
+
+bash
+pip3 install --user cfn-lint
+7. Check if it's in system directories:
+
+bash
+ls /usr/local/bin/ | grep cfn
+ls /opt/homebrew/bin/ | grep cfn  # if on Apple Silicon Mac
+The python3 -m cfnlint approach (option 4) usually works even when the executable isn't in PATH. Try that first, and let me know what you find with the pip3 show cfn-lint command.
+
+PROMPT: this is what I got when I typed in option 1: "Name: cfn-lint
+Version: 1.38.2
+Summary: Checks CloudFormation templates for practices and behaviour that could potentially be improved
+Home-page: https://github.com/aws-cloudformation/cfn-lint
+Author: Kevin DeJong
+Author-email: kddejong@amazon.com
+License-Expression: MIT-0
+Location: /Users/jamestabron/Library/Python/3.9/lib/python/site-packages
+Requires: aws-sam-translator, jsonpatch, networkx, pyyaml, regex, sympy, typing_extensions
+Required-by:"
+
+Perfect! Now I can see where cfn-lint is installed. Based on the location, the executable should be in:
+
+Try this path:
+
+bash
+/Users/jamestabron/Library/Python/3.9/bin/cfn-lint security-controls-baseline.yaml
+If that works, add it to your PATH permanently: Add this line to your ~/.zshrc file:
+
+bash
+export PATH="$PATH:/Users/jamestabron/Library/Python/3.9/bin"
+Then reload your shell:
+
+bash
+source ~/.zshrc
+Alternative - Python module approach (should definitely work):
+
+bash
+python3 -m cfnlint security-controls-baseline.yaml
+To verify the bin directory exists:
+
+bash
+ls /Users/jamestabron/Library/Python/3.9/bin/
+The Python module approach (python3 -m cfnlint) is often the most reliable since it uses the installed package directly without worrying about PATH issues. Try that if the direct path doesn't work.
+
+Once you get it working, adding the bin directory to your PATH will make cfn-lint available as a regular command.
+
+PROMPT: where  is the ~/.zshrc file?
+
+The ~/.zshrc file is in your home directory. The ~ symbol is a shortcut for your home directory (/Users/jamestabron).
+
+To find and edit it:
+
+Option 1: Check if it exists:
+
+bash
+ls -la ~/.zshrc
+Option 2: Edit it (will create if it doesn't exist):
+
+bash
+nano ~/.zshrc
+or
+
+bash
+open ~/.zshrc
+Option 3: See the full path:
+
+bash
+echo ~/.zshrc
+This will show: /Users/jamestabron/.zshrc
+
+To add the PATH line:
+
+Open the file with nano ~/.zshrc
+Add this line at the end:
+bash
+export PATH="$PATH:/Users/jamestabron/Library/Python/3.9/bin"
+Save and exit (in nano: Ctrl+X, then Y, then Enter)
+Reload your shell: source ~/.zshrc
+Note: Files starting with . (like .zshrc) are hidden files. If you're looking in Finder, you'll need to press Cmd+Shift+. to show hidden files.
+
+The .zshrc file contains configuration settings that run every time you open a new terminal session.
+
+PROMPT: I added that line, how do I save it?
+
+In nano, follow these steps to save:
+
+Press Ctrl + X (this will ask if you want to save)
+Press Y (to confirm you want to save the changes)
+Press Enter (to confirm the filename)
+You should see something like:
+
+Save modified buffer? (Answering "No" will DISCARD changes.)
+ Y Yes
+ N No           ^C Cancel
+After you save and exit, run:
+
+bash
+source ~/.zshrc
+Then try:
+
+bash
+cfn-lint security-controls-baseline.yaml
+The keyboard shortcuts will be shown at the bottom of the nano editor:
+
+^X means Ctrl+X
+^O means Ctrl+O (Write Out/Save)
+^G means Ctrl+G (Help)
+
+PROMPT: got this error when I ran cfn-lint after updating the .zshrc file and re-opening the terminal: "E0003 security-controls-baseline.yaml could not be processed by glob.glob
+None:1:1"
+
+This error suggests there's an issue with the file path or the file doesn't exist in your current directory. Let's troubleshoot:
+
+1. Check if the file exists in your current directory:
+
+bash
+ls -la security-controls-baseline.yaml
+2. Check what directory you're currently in:
+
+bash
+pwd
+3. If the file is in a different directory, either:
+
+Navigate to the file:
+
+bash
+cd /path/to/your/file
+cfn-lint security-controls-baseline.yaml
+Or use the full path to the file:
+
+bash
+cfn-lint /full/path/to/security-controls-baseline.yaml
+4. If the file exists, check if it's a valid YAML file:
+
+bash
+file security-controls-baseline.yaml
+head -5 security-controls-baseline.yaml
+5. Try with a wildcard to see if cfn-lint can find any YAML files:
+
+bash
+cfn-lint *.yaml
+The E0003 error typically means cfn-lint can't find or access the file you specified. Make sure you're in the correct directory where the file is located, or provide the full path to the file.
+
+What do you see when you run ls -la security-controls-baseline.yaml?
+
+PROMPT: what's the fastest way to get to a directory from your main directory?
+
+Here are the fastest ways to navigate to a directory from your home directory:
+
+1. Use cd with the full path:
+
+bash
+cd /path/to/your/directory
+2. Use tab completion (fastest for typing):
+
+bash
+cd /Us[TAB]jam[TAB]Doc[TAB]project[TAB]
+Press TAB after typing a few letters to auto-complete.
+
+3. If it's in your home directory, use ~:
+
+bash
+cd ~/Documents/myproject
+cd ~/Desktop/files
+4. Recent directories - use cd - to go back:
+
+bash
+cd /some/long/path
+cd ~
+cd -    # goes back to /some/long/path
+5. Use finder integration (macOS):
+
+Drag the folder from Finder into Terminal
+Or right-click folder → Services → New Terminal at Folder
+6. Set up aliases for frequently used directories: Add to your ~/.zshrc:
+
+bash
+alias proj="cd ~/Documents/my-project"
+alias work="cd ~/work/important-stuff"
+Pro tips:
+
+cd alone takes you back to home directory
+cd .. goes up one directory
+pwd shows current directory
+Use ls to see what's in the current directory
+What's the path to the directory where your YAML file is located?
+
+NOTES FROM ME ON THE ABOVE:
+I eventually was able to run cfn-lint once I ran it from the directory the .yaml file was in.  
