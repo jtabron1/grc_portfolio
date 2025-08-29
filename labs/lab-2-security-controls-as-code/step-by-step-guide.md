@@ -39,6 +39,7 @@ Before deploying your CloudFormation template, use [cfn-lint](https://github.com
   - Flags unsupported or misspelled properties
   - Highlights best practice violations
   - Saves time by catching issues before deployment
+  - Note: You first need to append this line to the end of your .zshrc file:"export PATH="$PATH:/Users/jamestabron/Library/Python/3.9/bin""
 
 **Tip:** Always run `cfn-lint` before deploying with the AWS CLI or Console!
 
